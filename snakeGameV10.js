@@ -3,7 +3,7 @@
 //
 
 Snek[] bigSnek = new Snek[1];
-bigSnek[0] = new Snek(0, 0, true); //Establishing the Head of the Snake
+bigSnek[0] = new Snek(0, 0); //Establishing the Head of the Snake
 
 bool snaccEaten = false;
 bool dead = false;
@@ -42,7 +42,7 @@ void draw() /*called directly after setup() and continuously executes code in bl
 
     if(snaccEaten == true){
         snaccEaten = false; //reset bool
-        bigSnek = append(bigSnek, new Snek(bigSnek[bigSnek.length-1].x, bigSnek[bigSnek.length-1].y, false));
+        bigSnek = append(bigSnek, new Snek(bigSnek[bigSnek.length-1].x, bigSnek[bigSnek.length-1].y));
     }
 
     for (i = bigSnek.length-1; i > 0; i--){
@@ -64,18 +64,7 @@ void keyPressed(){
         dir = keyCode; //we've encoded the direction for the snake as a (int) code
         println(dir); //37 (left) 38 (up) 39 (right) 40 (down)
     }; 
-
-    if(key == 'z'){ //For debugging Snacc
-        snaccEaten = true;
-        println("snaccccc");
-    } 
-
-    if(key == 'x'){ //paused
-        noLoop();
-    }
-    if(key == 'X'){ 
-         loop(); 
-    }
+	
     if(key == 'r'){ //reset button
         bigSnek = { }; //reset the array
         bigSnek[0] = new Snek(0, 0, true); //re-establish new head
@@ -94,23 +83,15 @@ class Snek {
   int x, y;
   int r, g, b;
 
-Snek(int xPos, int yPos, bool isFirst) { //Initializing Portion
+Snek(int xPos, int yPos) { //Initializing Portion
 
    x = xPos;
    y = yPos;   
 
-   if(isFirst){
-      r = 222;
-      g = 120;
-      b = 20;
-   } else {
-      r = g = b = 230;
-   }
-
 }
 
 void update() { //Updates the visuals
-    fill(r, g, b);
+    fill(230);
     rect(x, y, unitLength - 10, unitLength - 10);
 }
 
@@ -155,7 +136,6 @@ void move(int dir){
 
 class Snacc {
     int x, y;
-    bool hasLooped = false;
 
     Snacc(){
         println("snacc function");
