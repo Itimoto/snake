@@ -1,49 +1,35 @@
-// JavaScript source code
-// snakeGame v0.1
-//
+//***********************************
+// Processing JS source code
+// snakeGame v1.0: Cleaned up Source
+// Can move Snek, Eat Snacc, and Grow Big
+// Less cluttered background
+// Speeds up with progress
+//***********************************
+
+
+int unitLength = 30; //Affects tile size
+int scale = 18; //Affects canvas size
+int dir = 0; //snake's direction
+
+int speed = 4; //Tied to framerate
 
 Snek[] bigSnek = new Snek[1];
 bigSnek[0] = new Snek(0, 0); //Establishing the Head of the Snake
-
-bool snaccEaten = false;
-bool dead = false;
-
-
-int unitLength = 30;
-int scale = 25;
-int dir = 0; //will store direction of the snake
 
 Snacc snacc = new Snacc();
 
 void setup()
 {
-    size((scale * unitLength) - 10, (scale * unitLength) - 10); //defines dimension of the display window in units of pixels
-    frameRate(10);    
-
-    println("Initialized");
+    size((2 * scale * unitLength) - 10, (scale * unitLength) - 10); //defines dimension of the display window in units of pixels
+    frameRate(speed);    
 }
 
 
 void draw() /*called directly after setup() and continuously executes code in block until prgrm is stopped or noLoop() is called */
 {
-    background(150, 150, 150); //Setup tiled background for each frame
-    fill(100, 100, 100);
-    for (int x = 0; x <= (scale * unitLength); x += unitLength) {
-        for (int y = 0; y <= (scale * unitLength); y += unitLength) {
-            rect(x, y, unitLength - 10, unitLength - 10);
-        }
-    }
-
-    if(dead){
-        noLoop();
-    }
-
+    background(0);
+	
     snacc.update();
-
-    if(snaccEaten == true){
-        snaccEaten = false; //reset bool
-        bigSnek = append(bigSnek, new Snek(bigSnek[bigSnek.length-1].x, bigSnek[bigSnek.length-1].y));
-    }
 
     for (i = bigSnek.length-1; i > 0; i--){
         bigSnek[i].x = bigSnek[i-1].x; //Working from the back, we'll set the value of the last tile to be the 2nd to last, etc.
@@ -53,35 +39,31 @@ void draw() /*called directly after setup() and continuously executes code in bl
    
     bigSnek[0].move(dir);
     bigSnek[0].update();
-
 }
 
 
 void keyPressed(){
-    println("Key Pressed");
-
+	
     if(keyCode == UP || keyCode == DOWN || keyCode == RIGHT || keyCode == LEFT){
-        dir = keyCode; //we've encoded the direction for the snake as a (int) code
-        println(dir); //37 (left) 38 (up) 39 (right) 40 (down)
-    }; 
+        dir = keyCode; //37 (left) 38 (up) 39 (right) 40 (down)
+    }
 	
     if(key == 'r'){ //reset button
         bigSnek = { }; //reset the array
         bigSnek[0] = new Snek(0, 0, true); //re-establish new head
-        dead = false;
         dir = 0;
-        snacc = new Snacc();
+        snacc = new Snacc(); //for new coordinates
         loop();
     }
-
 }
 
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\
+
 
 class Snek {
 
   int x, y;
-  int r, g, b;
 
 Snek(int xPos, int yPos) { //Initializing Portion
 
@@ -98,13 +80,13 @@ void update() { //Updates the visuals
 void move(int dir){
 
     if ((dir == UP && y-unitLength < 0) || (dir == DOWN && y+unitLength >= scale*unitLength)){ //Checking bounds...
-        dead = true;
+        noLoop();
         this.update(); // 0 < y < max dimension
         return;
     }
 
-    if ((dir == LEFT && x-unitLength < 0) || (dir == RIGHT && x+unitLength >= scale*unitLength)){
-        dead = true;
+    if ((dir == LEFT && x-unitLength < 0) || (dir == RIGHT && x+unitLength >= 2*scale*unitLength)){
+        noLoop();
         this.update(); // 0 < x < max dimension
         return;
     }
@@ -119,31 +101,28 @@ void move(int dir){
             x += (unitLength);
         } else if (dir == LEFT) {
             x -= (unitLength);
-        } else {
-            //println("invalid direction");
         }
     }
     
     for(i = 1; i < bigSnek.length; i++){ //Checks if it's touching any previous instances
         if(this.x == bigSnek[i].x && this.y == bigSnek[i].y){
-            dead = true;
+            noLoop(); //'Dead,' effectively
         }
     }
 }
 }
 
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\
+
 
 class Snacc {
     int x, y;
 
     Snacc(){
-        println("snacc function");
         newCoordinates = genLocation();
         x = newCoordinates.x;
         y = newCoordinates.y;
-        println("x: " + x + " y: " + y);
-
     }
 
     void genLocation(){ //recursively generates new coordinates not touching the snake
@@ -165,12 +144,15 @@ class Snacc {
         fill(201, 22, 22);
         rect(x + (unitLength / 5), y + (unitLength / 5), (unitLength) / 4, (unitLength) / 4);
         
-        if(x == bigSnek[0].x && y == bigSnek[0].y){
+        if(x == bigSnek[0].x && y == bigSnek[0].y){ //On eating the snacc:
             newCoordinates = genLocation();
             x = newCoordinates.x;
             y = newCoordinates.y;
-            println("x: " + x + " y: " + y);
-            snaccEaten = true;
+	    			
+	    bigSnek = append(bigSnek, new Snek(bigSnek[bigSnek.length-1].x, bigSnek[bigSnek.length-1].y)); //new tile at previous tile's x&y
+						
+	    speed++;
+	    frameRate(speed);
         }
     }
        
