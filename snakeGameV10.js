@@ -51,8 +51,13 @@ void keyPressed(){
     if(key == 'r'){ //reset button
         bigSnek = { }; //reset the array
         bigSnek[0] = new Snek(0, 0, true); //re-establish new head
-        dir = 0;
+        
+	dir = 0;
         snacc = new Snacc(); //for new coordinates
+	
+	speed = 4;
+	frameRate(speed);
+	    
         loop();
     }
 }
